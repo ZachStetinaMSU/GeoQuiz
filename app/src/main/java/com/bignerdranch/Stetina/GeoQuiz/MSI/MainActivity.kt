@@ -2,56 +2,53 @@ package com.bignerdranch.Stetina.GeoQuiz.MSI
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
+import android.util.Log
 import android.widget.Toast
 import com.bignerdranch.Stetina.GeoQuiz.MSI.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
+
+private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMainBinding
-    //private lateinit var trueButton: Button
-    //private lateinit var falseButton: Button
 
 
 
-        private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true))
 
-private var currentIndex = 0
+        private lateinit var binding: ActivityMainBinding
+
+
+
+    private val questionBank = listOf(
+        Question(R.string.question_australia, true,false),
+        Question(R.string.question_oceans, true,false),
+        Question(R.string.question_mideast, false,false),
+        Question(R.string.question_africa, false,false),
+        Question(R.string.question_americas, true,false),
+        Question(R.string.question_asia, true,false),
+    )
+
+    private var currentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // setContentView(R.layout.activity_main)
+        Log.d(TAG, "onCreate(Bundle?) called")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //trueButton = findViewById(R.id.true_button)
-        //falseButton = findViewById(R.id.false_button)
-
-        /*  trueButton.setOnClickListener { view: View ->
-
-            Toast.makeText(
-                this,
-                R.string.correct_toast,
-                Toast.LENGTH_SHORT
-            ).show()
 
         }
 
-        falseButton.setOnClickListener { view: View ->
+        private fun isAnswered(index:Int){
+            if (questionBank[index].answered==true){
+                binding.trueButton.isEnabled=false
+                binding.falseButton.isEnabled=false
+            }else{
+                binding.trueButton.isEnabled=true
+                binding.falseButton.isEnabled=true
+            }
 
-            Toast.makeText(
-                this,
-                R.string.incorrect_toast,
-                Toast.LENGTH_SHORT
-            ).show()*/
 
         binding.trueButton.setOnClickListener {
             val snackBar = Snackbar.make(
@@ -60,6 +57,7 @@ private var currentIndex = 0
                 Snackbar.LENGTH_LONG
             )
             snackBar.show()
+            checkAnswer(true)
         }
 
         binding.falseButton.setOnClickListener {
@@ -69,6 +67,7 @@ private var currentIndex = 0
                 Snackbar.LENGTH_LONG
             )
             snackBar.show()
+            checkAnswer(false)
         }
 
 
@@ -76,38 +75,79 @@ private var currentIndex = 0
             currentIndex = (currentIndex + 1) % questionBank.size
             val questionTextResId = questionBank[currentIndex].textResId
             binding.questionTextview.setText(questionTextResId)
+            isAnswered(currentIndex)
+            updateQuestion()
 
         }
 
 
-        binding.prevButton.setOnClickListener{
+        binding.prevButton.setOnClickListener {
             currentIndex = (currentIndex - 1) % questionBank.size
+            val questionTextResId = questionBank[currentIndex].textResId
+            binding.questionTextview.setText(questionTextResId)
+            isAnswered(currentIndex)
+            updateQuestion()
+        }
+
+
+            updateQuestion()
+
+
+        }
+
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart() called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume() called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause() called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop() called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy() called")
+    }
+
+        private fun updateQuestion() {
             val questionTextResId = questionBank[currentIndex].textResId
             binding.questionTextview.setText(questionTextResId)
         }
 
-        val questionTextResId = questionBank[currentIndex].textResId
-        binding.questionTextview.setText(questionTextResId)
 
-    }
+    private fun checkAnswer(userAnswer: Boolean) {
+        val correctAnswer = questionBank[currentIndex].answer
+
+        val messageResId = if (userAnswer == correctAnswer) {
+            R.string.correct_toast
+        } else {
+            R.string.incorrect_toast
         }
 
-      //private fun updateQuestion(){
-         // val questionTextResid = questionBank[currentIndex].textResId
-         // binding.questionTextView.setText(questionTextResid)
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
+            .show()
 
 
-//private fun checkAnswer(userAnswer: Boolean) {
-    //val correctAnswer = questionBank[currentIndex].answer
+    }
 
-    //val messageResId = if (userAnswer == correctAnswer) {
-        //R.string.correct_toast
-  //  } //else {
-        //R.string.incorrect_toast
-   // }
+   
 
-    //Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
-       // .show() }
+}
+
+
 
 
 
